@@ -49,6 +49,7 @@ scaler_x=joblib.load("Models/scaler_x.pkl")
 scaler_y=joblib.load("Models/scaler_y.pkl")
 scaler_y_svm=joblib.load("Models/scaler_y_svm.pkl")
 scaler_x_svm=joblib.load("Models/scaler_x_svm.pkl")
+abench=joblib.load("Models/abench.pkl")
 
 
 type_apt=['Single Family One Storey','Single Family Two Storey','Townhouse', 'Apartment']
@@ -96,6 +97,14 @@ def prediction(Region, Location_u, Type_u, year):
   pred=[[year, boc,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False,False]]
   pred_df=pd.DataFrame(pred, columns=cols)
   pred_df_xgb=pd.DataFrame(pred_xgb, columns=cols_xgb)
+  b=0
+  
+  for _, p in abench.iterrows():
+      if str(p['Location']).find(Location_u)!=-1 and str(p['Type'])==Type_u and int(p['Year'])==year:
+          b=int(p['Benchmark price_SA'])
+  
+  
+  #print(str(b))
   for k,v in region_m.items():
       if(str(v)==str(Region)):
           pred_df_xgb['Region']=pred_df_xgb['Region'].apply(lambda x:k)
@@ -161,12 +170,13 @@ def prediction(Region, Location_u, Type_u, year):
   
   if year==2025:
       se="The actual predicted price of "
-      ve=" is: "
+      ve=" is:\n\t "
   else:
       se="In "+str(year)+", the estimated price of "
-      ve=" was: "
+      ve=" was:\n\t "
   
-  txt=se+str(Type_u)+" in "+str(Location_u)+" area"+ve+str(int(rf.predict(pred_df)))+" when using Random forest model \n \t "+str(int(dt.predict(pred_df)))+" when using Decision Tree Regressor model \n \t "+str(int(mlr.predict(pred_df)))+" when using Multi Linear Regression model \n \t "+str(int(lgbm.predict(pred_df)))+" when using LGBM model \n \t "+str(int(gbr.predict(pred_df)))+" when using Gradient Boost Regressor model \n \t "+str(int(xgb.predict(pred_df_xgb)))+" when using XGBoost model \n \t "+str(int(knn_pred))+" when using KNN model \n \t "
+  txt=st.text(se+str(Type_u)+" in "+str(Location_u)+" area"+ve+str(int(rf.predict(pred_df)))+" when using Random forest model\n\t "+str(int(dt.predict(pred_df)))+" when using Decision Tree Regressor model\n\t "+str(int(mlr.predict(pred_df)))+" when using Multi Linear Regression model\n\t "+str(int(lgbm.predict(pred_df)))+" when using LGBM model\n\t "+str(int(gbr.predict(pred_df)))+" when using Gradient Boost Regressor model\n\t "+str(int(xgb.predict(pred_df_xgb)))+" when using XGBoost model\n\t "+str(int(knn_pred))+" when using KNN model\n ")
+  ave=st.text("Average price in "+str(year)+" of "+str(Type_u)+" in "+str(Location_u)+" area is: "+str(b))
   return txt
 
 # this is the main function in which we define our webpage
