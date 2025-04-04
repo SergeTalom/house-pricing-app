@@ -207,12 +207,12 @@ def main():
     #ApplicantIncome = st.number_input("Applicants monthly income")
     #LoanAmount = st.number_input("Total loan amount")
     #Credit_History = st.selectbox('Credit_History',("Unclear Debts","No Unclear Debts"))
-    result =""
+    #result =""
 
     # when 'Predict' is clicked, make the prediction and store it
     if st.button("Predict"):
-        result = prediction(str(Region), str(Location_u), str(Type_u), int(year))
-        st.success(result)
+        prediction(str(Region), str(Location_u), str(Type_u), int(year))
+        #st.success(result)
         st.pyplot(fig)
         #print(result)
 
